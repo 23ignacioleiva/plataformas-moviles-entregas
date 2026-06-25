@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ─── Reset & Base ─────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -35,7 +34,6 @@
       overflow-x: hidden;
     }
 
-    /* ─── 3-D Canvas Background ────────────────────────── */
     #bg-canvas {
       position: fixed;
       inset: 0;
@@ -43,7 +41,6 @@
       pointer-events: none;
     }
 
-    /* ─── Wrapper ───────────────────────────────────────── */
     .wrapper {
       position: relative;
       z-index: 1;
@@ -86,7 +83,7 @@
 
     @keyframes float {
       0%,100% { transform: translateY(0); }
-      50%     { transform: translateY(-10px); }
+      50%      { transform: translateY(-10px); }
     }
 
     .hero-title {
@@ -98,9 +95,7 @@
       text-shadow: 0 0 60px rgba(117,170,219,.25);
     }
 
-    .hero-title span {
-      color: var(--celeste);
-    }
+    .hero-title span { color: var(--celeste); }
 
     .hero-sub {
       margin-top: 1.2rem;
@@ -126,13 +121,11 @@
       animation: fadeUp 1s ease 1.2s both;
     }
 
-    .hero-scroll svg {
-      animation: bounce 1.6s ease-in-out infinite;
-    }
+    .hero-scroll svg { animation: bounce 1.6s ease-in-out infinite; }
 
     @keyframes bounce {
       0%,100% { transform: translateY(0); }
-      50%     { transform: translateY(6px); }
+      50%      { transform: translateY(6px); }
     }
 
     @keyframes fadeUp {
@@ -193,7 +186,7 @@
 
     .squad-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Un poco más ancha para la foto */
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1.2rem;
     }
 
@@ -212,7 +205,7 @@
                   border-color .25s ease,
                   box-shadow .25s ease;
       cursor: pointer;
-      min-height: 220px;
+      min-height: 340px;
     }
 
     .card:hover {
@@ -222,64 +215,77 @@
                   0 0 30px rgba(117,170,219,.12);
     }
 
-    /* ─── EFECTO ESTADIO (FOTO Y GRADIENTE) ─────────────── */
-    .card-player-img {
+    /* ─── FOTO DE JUGADOR como fondo ──────────────────── */
+    .card-photo {
       position: absolute;
-      top: 10%;
-      right: -10px;
-      width: 160px;
-      height: 100%;
+      inset: 0;
       z-index: 0;
-      background-size: contain;
-      background-position: bottom right; 
+      background-size: cover;
+      background-position: top center;
       background-repeat: no-repeat;
-      opacity: 0.35; /* Suave para que no tape el texto */
-      filter: grayscale(40%) contrast(1.1);
-      transition: all 0.5s cubic-bezier(.22,1,.36,1);
+      transition: transform .4s cubic-bezier(.22,1,.36,1), opacity .3s ease;
+      opacity: 0;  /* empieza invisible, se muestra cuando carga */
     }
 
-    .card-gradient {
+    .card-photo.loaded {
+      opacity: 1;
+    }
+
+    .card:hover .card-photo {
+      transform: scale(1.05);
+    }
+
+    /* Gradiente sobre la foto para que el texto sea legible */
+    .card-photo-overlay {
       position: absolute;
       inset: 0;
       z-index: 1;
-      /* Oscurece la parte izquierda para que el texto resalte, y deja la derecha libre para la foto */
-      background: linear-gradient(90deg, var(--navy-card) 45%, rgba(22, 37, 64, 0.4) 100%);
-      transition: opacity 0.4s ease;
+      background: linear-gradient(
+        to bottom,
+        rgba(15,26,46,0.15) 0%,
+        rgba(15,26,46,0.25) 30%,
+        rgba(15,26,46,0.70) 60%,
+        rgba(15,26,46,0.97) 100%
+      );
+      transition: background .3s ease;
     }
 
-    .card:hover .card-player-img {
-      opacity: 0.95;
-      filter: grayscale(0%) contrast(1.1);
-      transform: scale(1.08) translateX(-5px);
+    .card:hover .card-photo-overlay {
+      background: linear-gradient(
+        to bottom,
+        rgba(15,26,46,0.05) 0%,
+        rgba(15,26,46,0.20) 30%,
+        rgba(15,26,46,0.75) 65%,
+        rgba(15,26,46,0.97) 100%
+      );
     }
 
-    .card:hover .card-gradient {
-      background: linear-gradient(90deg, var(--navy-card) 50%, rgba(22, 37, 64, 0.1) 100%);
+    /* Fallback cuando no hay foto */
+    .card-no-photo {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: var(--navy-card);
     }
-
-    /* Capas superiores para asegurar lectura */
-    .card-stripe, .card-body, .card-footer {
-      position: relative;
-      z-index: 2;
-    }
-    /* ────────────────────────────────────────────────────── */
 
     /* Dorsal gigante de fondo */
     .card-dorsal-bg {
       position: absolute;
-      right: 10px;
+      right: -8px;
       top: -18px;
       font-family: 'Bebas Neue', sans-serif;
       font-size: 9rem;
       line-height: 1;
-      color: rgba(117,170,219,.08);
+      color: rgba(117,170,219,.06);
       pointer-events: none;
       user-select: none;
+      z-index: 2;
       transition: color .3s ease;
-      z-index: 1;
     }
 
-    .card:hover .card-dorsal-bg { color: rgba(117,170,219,.15); }
+    .card:hover .card-dorsal-bg {
+      color: rgba(117,170,219,.10);
+    }
 
     /* Franja albiceleste superior */
     .card-stripe {
@@ -287,6 +293,8 @@
       background: linear-gradient(90deg, var(--celeste) 0%, var(--celeste2) 60%, transparent 100%);
       opacity: 0;
       transition: opacity .3s ease;
+      position: relative;
+      z-index: 3;
     }
 
     .card:hover .card-stripe { opacity: 1; }
@@ -297,13 +305,17 @@
       display: flex;
       flex-direction: column;
       gap: .5rem;
-      width: 75%; /* Evita que el texto pise mucho la cara del jugador */
+      position: relative;
+      z-index: 3;
+      /* empuja el contenido hacia abajo para verse sobre la foto */
+      margin-top: auto;
     }
 
     .card-top {
       display: flex;
       align-items: flex-start;
-      gap: .8rem;
+      justify-content: space-between;
+      gap: .5rem;
     }
 
     .card-dorsal {
@@ -311,6 +323,7 @@
       font-size: 1.15rem;
       color: var(--celeste);
       line-height: 1;
+      min-width: 2rem;
     }
 
     .card-tag {
@@ -320,11 +333,10 @@
       text-transform: uppercase;
       padding: .25rem .6rem;
       border-radius: 4px;
-      background: rgba(196,164,74,.15);
+      background: rgba(196,164,74,.18);
       color: var(--gold);
-      border: 1px solid rgba(196,164,74,.3);
+      border: 1px solid rgba(196,164,74,.35);
       white-space: nowrap;
-      backdrop-filter: blur(4px);
     }
 
     .card-name {
@@ -333,8 +345,7 @@
       line-height: 1.05;
       color: var(--white);
       letter-spacing: .03em;
-      margin-top: auto;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 8px rgba(0,0,0,.6);
     }
 
     .card-player {
@@ -349,17 +360,16 @@
       color: var(--text-dim);
       line-height: 1.55;
       margin-top: .2rem;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
     }
 
     .card-footer {
       padding: .9rem 1.4rem;
-      border-top: 1px solid rgba(117,170,219,.15);
+      border-top: 1px solid rgba(117,170,219,.07);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(22, 37, 64, 0.6);
-      backdrop-filter: blur(4px);
+      position: relative;
+      z-index: 3;
     }
 
     .card-cta {
@@ -395,12 +405,18 @@
       border-top: 1px solid rgba(117,170,219,.1);
       letter-spacing: .06em;
     }
+
     footer span { color: var(--celeste); }
 
     /* ─── Entrance animation ────────────────────────────── */
     .card { opacity: 0; transform: translateY(24px); }
-    .card.visible { animation: cardIn .55s cubic-bezier(.22,1,.36,1) forwards; }
-    @keyframes cardIn { to { opacity:1; transform: translateY(0); } }
+    .card.visible {
+      animation: cardIn .55s cubic-bezier(.22,1,.36,1) forwards;
+    }
+
+    @keyframes cardIn {
+      to { opacity:1; transform: translateY(0); }
+    }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
@@ -412,9 +428,10 @@
 <canvas id="bg-canvas"></canvas>
 
 <div class="wrapper">
-  <!-- ── HERO ──────────────────────────────────── -->
+
   <header class="hero">
     <div class="hero-badge">Plataformas Móviles · 2025</div>
+
     <svg class="hero-crest" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="Escudo AFA">
       <defs>
         <linearGradient id="gCeleste" x1="0" y1="0" x2="0" y2="1">
@@ -426,13 +443,17 @@
           <stop offset="100%" stop-color="#A07830"/>
         </linearGradient>
       </defs>
-      <path d="M100 10 L175 38 L175 110 Q175 160 100 190 Q25 160 25 110 L25 38 Z" fill="#1A2E4A" stroke="url(#gGold)" stroke-width="3"/>
-      <clipPath id="shield-clip"><path d="M100 10 L175 38 L175 110 Q175 160 100 190 Q25 160 25 110 L25 38 Z"/></clipPath>
+      <path d="M100 10 L175 38 L175 110 Q175 160 100 190 Q25 160 25 110 L25 38 Z"
+            fill="#1A2E4A" stroke="url(#gGold)" stroke-width="3"/>
+      <clipPath id="shield-clip">
+        <path d="M100 10 L175 38 L175 110 Q175 160 100 190 Q25 160 25 110 L25 38 Z"/>
+      </clipPath>
       <g clip-path="url(#shield-clip)">
         <rect x="25"  y="10" width="50" height="180" fill="url(#gCeleste)" opacity=".9"/>
         <rect x="125" y="10" width="50" height="180" fill="url(#gCeleste)" opacity=".9"/>
       </g>
-      <text x="100" y="118" font-family="'Bebas Neue', sans-serif" font-size="32" text-anchor="middle" fill="white" letter-spacing="3">AFA</text>
+      <text x="100" y="118" font-family="'Bebas Neue', sans-serif" font-size="32"
+            text-anchor="middle" fill="white" letter-spacing="3">AFA</text>
       <text x="100" y="80" font-size="18" text-anchor="middle" fill="#C4A44A">★★★</text>
       <circle cx="100" cy="52" r="12" fill="url(#gGold)" opacity=".85"/>
       <g fill="#C4A44A" opacity=".75">
@@ -447,15 +468,19 @@
       </g>
     </svg>
 
-    <h1 class="hero-title"><span>LA SCALONETA</span><br>DEL CÓDIGO</h1>
-    <p class="hero-sub">Trabajos prácticos de <strong>Plataformas Móviles</strong>.<br>11 jugadores, 16 partidos, un solo objetivo: llegar a producción.</p>
+    <h1 class="hero-title">
+      <span>LA SCALONETA</span><br>DEL CÓDIGO
+    </h1>
+    <p class="hero-sub">
+      Trabajos prácticos de <strong>Plataformas Móviles</strong>.<br>
+      11 jugadores, 16 partidos, un solo objetivo: llegar a producción.
+    </p>
     <div class="hero-scroll">
       <span>Ver plantel</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
   </header>
 
-  <!-- ── STATS ──────────────────────────────────── -->
   <div class="stats">
     <div class="stat"><div class="stat-n">16</div><div class="stat-l">Trabajos</div></div>
     <div class="stat"><div class="stat-n">★★★</div><div class="stat-l">Mundiales</div></div>
@@ -463,110 +488,182 @@
     <div class="stat"><div class="stat-n">2025</div><div class="stat-l">Temporada</div></div>
   </div>
 
-  <!-- ── SQUAD GRID ─────────────────────────────── -->
   <section class="squad-section">
     <p class="section-eyebrow">Plantel completo</p>
     <h2 class="section-title">CONVOCADOS</h2>
     <div class="squad-grid" id="grid"></div>
   </section>
 
-  <footer>Hecho con <span>❤</span> y mucho CSS · Plataformas Móviles 2025 · <span>AFA Dev</span></footer>
+  <footer>
+    Hecho con <span>❤</span> y mucho CSS · Plataformas Móviles 2025 · <span>AFA Dev</span>
+  </footer>
 </div>
 
-<!-- ── DATA ──────────────────────────────────────── -->
 <script>
-// Usamos los IDs oficiales de FIFA/EA Sports. 
-// Las fotos están recortadas, sin fondo, listas para la magia del CSS.
+/*
+  IDs de jugadores en API-Sports (media.api-sports.io).
+  Fuente: base de datos pública de API-Football v3.
+  Las URLs de imagen son públicas sin key.
+*/
 const PLANTEL = [
   {
-    n: '01', name: 'HTML', tp: 'tp-1/', fifa_id: '202811',
+    n: '01', name: 'HTML', tp: 'tp-1/',
     player: 'Emiliano Martínez', pos: 'Arquero',
-    desc: 'El arco bien plantado. Estructura fundacional que sostiene todo el juego: etiquetas semánticas, marcado sólido, sin fisuras.'
+    desc: 'El arco bien plantado. Estructura fundacional que sostiene todo el juego: etiquetas semánticas, marcado sólido, sin fisuras.',
+    color: '#75AADB',
+    photoId: 2931   // Emiliano "Dibu" Martínez
   },
   {
-    n: '02', name: 'CSS Selectores', tp: 'tp-2/', fifa_id: '239614',
+    n: '02', name: 'CSS Selectores', tp: 'tp-2/',
     player: 'Nahuel Molina', pos: 'Lateral Derecho',
-    desc: 'Precisión por la banda. Selectores específicos que apuntan a cada elemento con quirúrgica exactitud.'
+    desc: 'Precisión por la banda. Selectores específicos que apuntan a cada elemento con quirúrgica exactitud.',
+    color: '#5B95CC',
+    photoId: 50008  // Nahuel Molina
   },
   {
-    n: '03', name: 'CSS Cascada', tp: 'tp-3/', fifa_id: '192366',
+    n: '03', name: 'CSS Cascada', tp: 'tp-3/',
     player: 'Nicolás Otamendi', pos: 'Defensor Central',
-    desc: 'La jerarquía y la herencia. Especificidad de estilos que impone orden desde el centro de la zaga.'
+    desc: 'La jerarquía y la herencia. Especificidad de estilos que impone orden desde el centro de la zaga.',
+    color: '#4A85BC',
+    photoId: 903    // Nicolás Otamendi
   },
   {
-    n: '04', name: 'Media Queries', tp: 'tp-4/', fifa_id: '232488',
+    n: '04', name: 'Media Queries', tp: 'tp-4/',
     player: 'Cristian Romero', pos: 'Defensor Central',
-    desc: 'Adaptación táctica total. Diseño responsivo que responde a cualquier pantalla como Cuti responde a cualquier delantero.'
+    desc: 'Adaptación táctica total. Diseño responsivo que responde a cualquier pantalla como Cuti responde a cualquier delantero.',
+    color: '#3975AC',
+    photoId: 2931   // placeholder – usamos Dibu si no hay foto de Cuti
   },
   {
-    n: '05', name: 'Bootstrap Base', tp: 'tp-5/', fifa_id: '239301',
+    n: '05', name: 'Bootstrap Base', tp: 'tp-5/',
     player: 'Lisandro Martínez', pos: 'Defensor Central',
-    desc: 'Sistemas probados al máximo nivel. Framework que otorga estructura sólida y componentes listos para la Premier.'
+    desc: 'Sistemas probados al máximo nivel. Framework que otorga estructura sólida y componentes listos para la Premier.',
+    color: '#2865A0',
+    photoId: 50006  // Lisandro Martínez
   },
   {
-    n: '06', name: 'Bootstrap Grid', tp: 'tp-6/', fifa_id: '211256',
+    n: '06', name: 'Bootstrap Grid', tp: 'tp-6/',
     player: 'Germán Pezzella', pos: 'Defensor',
-    desc: 'Grillas complejas y alineación perfecta. La columna vertebral del layout que nunca pierde la forma.'
+    desc: 'Grillas complejas y alineación perfecta. La columna vertebral del layout que nunca pierde la forma.',
+    color: '#75AADB',
+    photoId: 2311   // Germán Pezzella
   },
   {
-    n: '07', name: 'Bootstrap Avanzado', tp: 'tp-7/', fifa_id: '212622',
+    n: '07', name: 'Bootstrap Avanzado', tp: 'tp-7/',
     player: 'Rodrigo De Paul', pos: 'Mediocampista',
-    desc: 'Componentes avanzados en el medio del campo. El motor que conecta diseño y funcionalidad sin parar de correr.'
+    desc: 'Componentes avanzados en el medio del campo. El motor que conecta diseño y funcionalidad sin parar de correr.',
+    color: '#C4A44A',
+    photoId: 994    // Rodrigo De Paul
   },
   {
-    n: '08', name: 'JS Funciones', tp: 'tp-8/', fifa_id: '258698',
+    n: '08', name: 'JS Funciones', tp: 'tp-8/',
     player: 'Enzo Fernández', pos: 'Mediocampista',
-    desc: 'Lógica y elegancia. Funciones reutilizables que distribuyen el juego con la visión de un mediocampista de clase mundial.'
+    desc: 'Lógica y elegancia. Funciones reutilizables que distribuyen el juego con la visión de un mediocampista de clase mundial.',
+    color: '#D4B45A',
+    photoId: 50007  // Enzo Fernández
   },
   {
-    n: '09', name: 'JS Arrays', tp: 'tp-9/', fifa_id: '246960',
+    n: '09', name: 'JS Arrays', tp: 'tp-9/',
     player: 'Julián Álvarez', pos: 'Delantero',
-    desc: 'Velocidad e iteración. Arrays y bucles que recorren colecciones de datos como La Araña recorre el área rival.'
+    desc: 'Velocidad e iteración. Arrays y bucles que recorren colecciones de datos como La Araña recorre el área rival.',
+    color: '#E0C060',
+    photoId: 50009  // Julián Álvarez
   },
   {
-    n: '10', name: 'JS Objetos', tp: 'tp-10/', fifa_id: '158023',
+    n: '10', name: 'JS Objetos', tp: 'tp-10/',
     player: 'Lionel Messi', pos: 'Delantero',
-    desc: 'El mejor de todos los tiempos. Objetos complejos que encapsulan el estado y la magia de la aplicación.'
+    desc: 'El mejor de todos los tiempos. Objetos complejos que encapsulan el estado y la magia de la aplicación.',
+    color: '#FFD700',
+    photoId: 154    // Lionel Messi
   },
   {
-    n: '11', name: 'JS DOM', tp: 'tp-11/', fifa_id: '259646',
+    n: '11', name: 'JS DOM', tp: 'tp-11/',
     player: 'Alejandro Garnacho', pos: 'Extremo',
-    desc: 'Velocidad y desborde por el flanco. Manipulación dinámica del DOM que altera la realidad de la interfaz en tiempo real.'
+    desc: 'Velocidad y desborde por el flanco. Manipulación dinámica del DOM que altera la realidad de la interfaz en tiempo real.',
+    color: '#75AADB',
+    photoId: 50011  // Garnacho
   },
   {
-    n: '12', name: 'JS Lógica', tp: 'tp-12/', fifa_id: '212501',
+    n: '12', name: 'JS Lógica', tp: 'tp-12/',
     player: 'Geronimo Rulli', pos: 'Arquero',
-    desc: 'Algoritmos encriptados y lógica avanzada. Segunda línea de defensa cuando la complejidad ataca.'
+    desc: 'Algoritmos encriptados y lógica avanzada. Segunda línea de defensa cuando la complejidad ataca.',
+    color: '#5B95CC',
+    photoId: 2310   // Gerónimo Rulli
   },
   {
-    n: '13', name: 'JS Data', tp: 'tp-13/', fifa_id: '245367',
+    n: '13', name: 'JS Data', tp: 'tp-13/',
     player: 'Thiago Almada', pos: 'Mediocampista',
-    desc: 'Persistencia de datos en localStorage. Salvaguardando el estado del reino contra el olvido del navegador.'
+    desc: 'Persistencia de datos en localStorage. Salvaguardando el estado del reino contra el olvido del navegador.',
+    color: '#4A85BC',
+    photoId: 50013  // Thiago Almada
   },
   {
-    n: '14', name: 'JS Async', tp: 'tp-14/', fifa_id: '231558',
+    n: '14', name: 'JS Async', tp: 'tp-14/',
     player: 'Exequiel Palacios', pos: 'Mediocampista',
-    desc: 'Fetch, Promises y APIs externas. Conectando con el mundo exterior de forma asíncrona y resiliente.'
+    desc: 'Fetch, Promises y APIs externas. Conectando con el mundo exterior de forma asíncrona y resiliente.',
+    color: '#3975AC',
+    photoId: 4034   // Exequiel Palacios
   },
   {
-    n: '15', name: 'JS Flow', tp: 'tp-15/', fifa_id: '207439',
+    n: '15', name: 'JS Flow', tp: 'tp-15/',
     player: 'Leandro Paredes', pos: 'Mediocampista',
-    desc: 'Control del flujo de datos. Manejo de errores y control de ejecución con la pausa y la clase de un volante distribuidor.'
+    desc: 'Control del flujo de datos. Manejo de errores y control de ejecución con la pausa y la clase de un volante distribuidor.',
+    color: '#2865A0',
+    photoId: 1100   // Leandro Paredes
   },
   {
-    n: '16', name: 'PHP Backend', tp: 'tp-16/', fifa_id: '231478',
+    n: '16', name: 'PHP Backend', tp: 'tp-16/',
     player: 'Lautaro Martínez', pos: 'Delantero',
-    desc: 'El Toro en el servidor. Procesamiento del lado del servidor que demuele defensas con formularios y lógica de negocio.'
+    desc: 'El Toro en el servidor. Procesamiento del lado del servidor que demuele defensas con formularios y lógica de negocio.',
+    color: '#C4A44A',
+    photoId: 1785   // Lautaro Martínez
   }
 ];
 
-// Función para armar la URL de la imagen de EA (SoFIFA format)
-const getPlayerImage = (id) => {
-  const str = id.toString();
-  return `https://cdn.sofifa.net/players/${str.slice(0,3)}/${str.slice(3)}/24_120.png`;
+// Mapeo de jugadores a IDs conocidos en diferentes fuentes
+const PHOTO_SOURCES = {
+  // [nombre] : { apiSports: id, sofifa: id }
+  'Emiliano Martínez': { apiSports: 2931,  sofifa: '200145' },
+  'Nahuel Molina':     { apiSports: 50008, sofifa: '253387' },
+  'Nicolás Otamendi':  { apiSports: 903,   sofifa: '190460' },
+  'Cristian Romero':   { apiSports: 50004, sofifa: '233581' },
+  'Lisandro Martínez': { apiSports: 50006, sofifa: '229407' },
+  'Germán Pezzella':   { apiSports: 2311,  sofifa: '186526' },
+  'Rodrigo De Paul':   { apiSports: 994,   sofifa: '212319' },
+  'Enzo Fernández':    { apiSports: 50007, sofifa: '246112' },
+  'Julián Álvarez':    { apiSports: 50009, sofifa: '250249' },
+  'Lionel Messi':      { apiSports: 154,   sofifa: '158023' },
+  'Alejandro Garnacho':{ apiSports: 50011, sofifa: '259771' },
+  'Geronimo Rulli':    { apiSports: 2310,  sofifa: '207028' },
+  'Thiago Almada':     { apiSports: 50013, sofifa: '247267' },
+  'Exequiel Palacios': { apiSports: 4034,  sofifa: '237533' },
+  'Leandro Paredes':   { apiSports: 1100,  sofifa: '194958' },
+  'Lautaro Martínez':  { apiSports: 1785,  sofifa: '221749' },
 };
 
-// Render cards
+function getPhotoUrl(playerName, sourceIndex) {
+  const data = PHOTO_SOURCES[playerName];
+  if (!data) return null;
+
+  if (sourceIndex === 0) {
+    // API-Sports (Suele fallar por bloqueo de hotlink / CORS locales)
+    return `https://media.api-sports.io/football/players/${data.apiSports}.png`;
+  }
+  if (sourceIndex === 1) {
+    // SoFIFA (EA Sports) — Corregido dividiendo el ID en subcarpetas de 3 dígitos
+    const id = String(data.sofifa);
+    const folder1 = id.slice(0, 3);
+    const folder2 = id.slice(3);
+    
+    return `https://cdn.sofifa.net/players/${folder1}/${folder2}/24_120.png`;
+  }
+  return null; // sin más fuentes → mostrar iniciales
+}
+
+function getInitials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
 const grid = document.getElementById('grid');
 
 PLANTEL.forEach((p, i) => {
@@ -574,14 +671,41 @@ PLANTEL.forEach((p, i) => {
   a.className = 'card';
   a.href = p.tp;
   a.style.animationDelay = `${i * 0.045}s`;
+
+  // ── Determinar colores de fondo de iniciales ──
+  const hue = (i * 27) % 360;
+
   a.innerHTML = `
-    <!-- Imagen del jugador con fondo transparente -->
-    <div class="card-player-img" style="background-image: url('${getPlayerImage(p.fifa_id)}');"></div>
-    <!-- Gradiente lateral para legibilidad -->
-    <div class="card-gradient"></div>
+    <div class="card-stripe"></div>
+
+    <div class="card-no-photo" id="fallback-${i}" style="
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 1rem;
+    ">
+      <div style="
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: rgba(117,170,219,0.15);
+        border: 2px solid rgba(117,170,219,0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.8rem;
+        color: var(--celeste);
+        opacity: 0.6;
+        margin-top: 1rem;
+      ">${getInitials(p.player)}</div>
+    </div>
+
+    <div class="card-photo" id="photo-${i}"></div>
+    <div class="card-photo-overlay"></div>
+
     <div class="card-dorsal-bg">${p.n}</div>
 
-    <div class="card-stripe"></div>
     <div class="card-body">
       <div class="card-top">
         <div class="card-dorsal">#${p.n}</div>
@@ -600,17 +724,44 @@ PLANTEL.forEach((p, i) => {
       </span>
     </div>
   `;
+
   grid.appendChild(a);
+
+  // ── Carga progresiva de foto con fallback ──
+  function tryLoadPhoto(playerName, sourceIndex) {
+    const url = getPhotoUrl(playerName, sourceIndex);
+    if (!url) return; // sin más fuentes disponibles
+
+    const img = new Image();
+    img.onload = () => {
+      const photoDiv = document.getElementById(`photo-${i}`);
+      const fallbackDiv = document.getElementById(`fallback-${i}`);
+      if (photoDiv) {
+        photoDiv.style.backgroundImage = `url('${url}')`;
+        photoDiv.classList.add('loaded');
+        // Ocultar iniciales cuando la foto carga bien
+        if (fallbackDiv) fallbackDiv.style.opacity = '0';
+      }
+    };
+    img.onerror = () => {
+      // Intentar la siguiente fuente
+      tryLoadPhoto(playerName, sourceIndex + 1);
+    };
+    img.src = url;
+  }
+
+  tryLoadPhoto(p.player, 0);
 });
 
-// Intersection observer for entrance animation
+// Intersection Observer para animación de entrada
 const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }});
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
 }, { threshold: 0.08 });
 document.querySelectorAll('.card').forEach(c => io.observe(c));
 </script>
 
-<!-- ── THREE.JS BACKGROUND ─────────────────────── -->
 <script type="module">
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
 
@@ -654,8 +805,12 @@ geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3));
 geo.setAttribute('size',     new THREE.BufferAttribute(sizes, 1));
 
 const mat = new THREE.PointsMaterial({
-  size: 0.5, vertexColors: true, transparent: true, opacity: 0.55,
-  sizeAttenuation: true, depthWrite: false,
+  size: 0.5,
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.55,
+  sizeAttenuation: true,
+  depthWrite: false,
 });
 
 const particles = new THREE.Points(geo, mat);
@@ -676,8 +831,10 @@ scene.add(addLine(circlePoints, 0.07));
 scene.add(addLine([new THREE.Vector3(-60, 0, -20), new THREE.Vector3(60, 0, -20)], 0.05));
 
 const rect = [
-  new THREE.Vector3(-55, -32, -20), new THREE.Vector3( 55, -32, -20),
-  new THREE.Vector3( 55,  32, -20), new THREE.Vector3(-55,  32, -20),
+  new THREE.Vector3(-55, -32, -20),
+  new THREE.Vector3( 55, -32, -20),
+  new THREE.Vector3( 55,  32, -20),
+  new THREE.Vector3(-55,  32, -20),
   new THREE.Vector3(-55, -32, -20),
 ];
 scene.add(addLine(rect, 0.05));
@@ -694,7 +851,11 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+let scrollY = 0;
+window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
+
 const clock = new THREE.Clock();
+
 function tick() {
   requestAnimationFrame(tick);
   const t = clock.getElapsedTime();
