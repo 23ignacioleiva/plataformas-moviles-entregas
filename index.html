@@ -86,7 +86,7 @@
 
     @keyframes float {
       0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(-10px); }
+      50%     { transform: translateY(-10px); }
     }
 
     .hero-title {
@@ -132,7 +132,7 @@
 
     @keyframes bounce {
       0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(6px); }
+      50%     { transform: translateY(6px); }
     }
 
     @keyframes fadeUp {
@@ -193,7 +193,7 @@
 
     .squad-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Un poco más ancha para la foto */
       gap: 1.2rem;
     }
 
@@ -212,6 +212,7 @@
                   border-color .25s ease,
                   box-shadow .25s ease;
       cursor: pointer;
+      min-height: 220px;
     }
 
     .card:hover {
@@ -221,23 +222,64 @@
                   0 0 30px rgba(117,170,219,.12);
     }
 
+    /* ─── EFECTO ESTADIO (FOTO Y GRADIENTE) ─────────────── */
+    .card-player-img {
+      position: absolute;
+      top: 10%;
+      right: -10px;
+      width: 160px;
+      height: 100%;
+      z-index: 0;
+      background-size: contain;
+      background-position: bottom right; 
+      background-repeat: no-repeat;
+      opacity: 0.35; /* Suave para que no tape el texto */
+      filter: grayscale(40%) contrast(1.1);
+      transition: all 0.5s cubic-bezier(.22,1,.36,1);
+    }
+
+    .card-gradient {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      /* Oscurece la parte izquierda para que el texto resalte, y deja la derecha libre para la foto */
+      background: linear-gradient(90deg, var(--navy-card) 45%, rgba(22, 37, 64, 0.4) 100%);
+      transition: opacity 0.4s ease;
+    }
+
+    .card:hover .card-player-img {
+      opacity: 0.95;
+      filter: grayscale(0%) contrast(1.1);
+      transform: scale(1.08) translateX(-5px);
+    }
+
+    .card:hover .card-gradient {
+      background: linear-gradient(90deg, var(--navy-card) 50%, rgba(22, 37, 64, 0.1) 100%);
+    }
+
+    /* Capas superiores para asegurar lectura */
+    .card-stripe, .card-body, .card-footer {
+      position: relative;
+      z-index: 2;
+    }
+    /* ────────────────────────────────────────────────────── */
+
     /* Dorsal gigante de fondo */
     .card-dorsal-bg {
       position: absolute;
-      right: -8px;
+      right: 10px;
       top: -18px;
       font-family: 'Bebas Neue', sans-serif;
       font-size: 9rem;
       line-height: 1;
-      color: rgba(117,170,219,.06);
+      color: rgba(117,170,219,.08);
       pointer-events: none;
       user-select: none;
       transition: color .3s ease;
+      z-index: 1;
     }
 
-    .card:hover .card-dorsal-bg {
-      color: rgba(117,170,219,.12);
-    }
+    .card:hover .card-dorsal-bg { color: rgba(117,170,219,.15); }
 
     /* Franja albiceleste superior */
     .card-stripe {
@@ -255,14 +297,13 @@
       display: flex;
       flex-direction: column;
       gap: .5rem;
-      position: relative;
+      width: 75%; /* Evita que el texto pise mucho la cara del jugador */
     }
 
     .card-top {
       display: flex;
       align-items: flex-start;
-      justify-content: space-between;
-      gap: .5rem;
+      gap: .8rem;
     }
 
     .card-dorsal {
@@ -270,7 +311,6 @@
       font-size: 1.15rem;
       color: var(--celeste);
       line-height: 1;
-      min-width: 2rem;
     }
 
     .card-tag {
@@ -280,10 +320,11 @@
       text-transform: uppercase;
       padding: .25rem .6rem;
       border-radius: 4px;
-      background: rgba(196,164,74,.12);
+      background: rgba(196,164,74,.15);
       color: var(--gold);
-      border: 1px solid rgba(196,164,74,.25);
+      border: 1px solid rgba(196,164,74,.3);
       white-space: nowrap;
+      backdrop-filter: blur(4px);
     }
 
     .card-name {
@@ -292,6 +333,8 @@
       line-height: 1.05;
       color: var(--white);
       letter-spacing: .03em;
+      margin-top: auto;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     }
 
     .card-player {
@@ -306,14 +349,17 @@
       color: var(--text-dim);
       line-height: 1.55;
       margin-top: .2rem;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
     }
 
     .card-footer {
       padding: .9rem 1.4rem;
-      border-top: 1px solid rgba(117,170,219,.07);
+      border-top: 1px solid rgba(117,170,219,.15);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: rgba(22, 37, 64, 0.6);
+      backdrop-filter: blur(4px);
     }
 
     .card-cta {
@@ -330,10 +376,7 @@
 
     .card:hover .card-cta { color: var(--celeste); }
 
-    .card-cta svg {
-      transition: transform .2s ease;
-    }
-
+    .card-cta svg { transition: transform .2s ease; }
     .card:hover .card-cta svg { transform: translateX(4px); }
 
     .card-pos {
@@ -352,20 +395,13 @@
       border-top: 1px solid rgba(117,170,219,.1);
       letter-spacing: .06em;
     }
-
     footer span { color: var(--celeste); }
 
     /* ─── Entrance animation ────────────────────────────── */
     .card { opacity: 0; transform: translateY(24px); }
-    .card.visible {
-      animation: cardIn .55s cubic-bezier(.22,1,.36,1) forwards;
-    }
+    .card.visible { animation: cardIn .55s cubic-bezier(.22,1,.36,1) forwards; }
+    @keyframes cardIn { to { opacity:1; transform: translateY(0); } }
 
-    @keyframes cardIn {
-      to { opacity:1; transform: translateY(0); }
-    }
-
-    /* ─── Reduced motion ────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
@@ -373,16 +409,12 @@
 </head>
 <body>
 
-<!-- ── Three.js canvas ───────────────────────── -->
 <canvas id="bg-canvas"></canvas>
 
 <div class="wrapper">
-
   <!-- ── HERO ──────────────────────────────────── -->
   <header class="hero">
     <div class="hero-badge">Plataformas Móviles · 2025</div>
-
-    <!-- AFA Crest inline SVG -->
     <svg class="hero-crest" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="Escudo AFA">
       <defs>
         <linearGradient id="gCeleste" x1="0" y1="0" x2="0" y2="1">
@@ -394,23 +426,14 @@
           <stop offset="100%" stop-color="#A07830"/>
         </linearGradient>
       </defs>
-      <!-- Shield shape -->
-      <path d="M100 10 L175 38 L175 110 Q175 160 100 190 Q25 160 25 110 L25 38 Z"
-            fill="#1A2E4A" stroke="url(#gGold)" stroke-width="3"/>
-      <!-- Stripes -->
-      <clipPath id="shield-clip">
-        <path d="M100 10 L175 38 L175 110 Q175 160 100 190 Q25 160 25 110 L25 38 Z"/>
-      </clipPath>
+      <path d="M100 10 L175 38 L175 110 Q175 160 100 190 Q25 160 25 110 L25 38 Z" fill="#1A2E4A" stroke="url(#gGold)" stroke-width="3"/>
+      <clipPath id="shield-clip"><path d="M100 10 L175 38 L175 110 Q175 160 100 190 Q25 160 25 110 L25 38 Z"/></clipPath>
       <g clip-path="url(#shield-clip)">
         <rect x="25"  y="10" width="50" height="180" fill="url(#gCeleste)" opacity=".9"/>
         <rect x="125" y="10" width="50" height="180" fill="url(#gCeleste)" opacity=".9"/>
       </g>
-      <!-- AFA text -->
-      <text x="100" y="118" font-family="'Bebas Neue', sans-serif" font-size="32"
-            text-anchor="middle" fill="white" letter-spacing="3">AFA</text>
-      <!-- Star -->
+      <text x="100" y="118" font-family="'Bebas Neue', sans-serif" font-size="32" text-anchor="middle" fill="white" letter-spacing="3">AFA</text>
       <text x="100" y="80" font-size="18" text-anchor="middle" fill="#C4A44A">★★★</text>
-      <!-- Sol de Mayo simplified -->
       <circle cx="100" cy="52" r="12" fill="url(#gGold)" opacity=".85"/>
       <g fill="#C4A44A" opacity=".75">
         <rect x="97.5" y="32" width="5" height="8" rx="2"/>
@@ -424,13 +447,8 @@
       </g>
     </svg>
 
-    <h1 class="hero-title">
-      <span>LA SCALONETA</span><br>DEL CÓDIGO
-    </h1>
-    <p class="hero-sub">
-      Trabajos prácticos de <strong>Plataformas Móviles</strong>.<br>
-      11 jugadores, 16 partidos, un solo objetivo: llegar a producción.
-    </p>
+    <h1 class="hero-title"><span>LA SCALONETA</span><br>DEL CÓDIGO</h1>
+    <p class="hero-sub">Trabajos prácticos de <strong>Plataformas Móviles</strong>.<br>11 jugadores, 16 partidos, un solo objetivo: llegar a producción.</p>
     <div class="hero-scroll">
       <span>Ver plantel</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -452,111 +470,101 @@
     <div class="squad-grid" id="grid"></div>
   </section>
 
-  <footer>
-    Hecho con <span>❤</span> y mucho CSS · Plataformas Móviles 2025 · <span>AFA Dev</span>
-  </footer>
+  <footer>Hecho con <span>❤</span> y mucho CSS · Plataformas Móviles 2025 · <span>AFA Dev</span></footer>
 </div>
 
 <!-- ── DATA ──────────────────────────────────────── -->
 <script>
+// Usamos los IDs oficiales de FIFA/EA Sports. 
+// Las fotos están recortadas, sin fondo, listas para la magia del CSS.
 const PLANTEL = [
   {
-    n: '01', name: 'HTML', tp: 'tp-1/',
+    n: '01', name: 'HTML', tp: 'tp-1/', fifa_id: '202811',
     player: 'Emiliano Martínez', pos: 'Arquero',
-    desc: 'El arco bien plantado. Estructura fundacional que sostiene todo el juego: etiquetas semánticas, marcado sólido, sin fisuras.',
-    color: '#75AADB'
+    desc: 'El arco bien plantado. Estructura fundacional que sostiene todo el juego: etiquetas semánticas, marcado sólido, sin fisuras.'
   },
   {
-    n: '02', name: 'CSS Selectores', tp: 'tp-2/',
+    n: '02', name: 'CSS Selectores', tp: 'tp-2/', fifa_id: '239614',
     player: 'Nahuel Molina', pos: 'Lateral Derecho',
-    desc: 'Precisión por la banda. Selectores específicos que apuntan a cada elemento con quirúrgica exactitud.',
-    color: '#5B95CC'
+    desc: 'Precisión por la banda. Selectores específicos que apuntan a cada elemento con quirúrgica exactitud.'
   },
   {
-    n: '03', name: 'CSS Cascada', tp: 'tp-3/',
+    n: '03', name: 'CSS Cascada', tp: 'tp-3/', fifa_id: '192366',
     player: 'Nicolás Otamendi', pos: 'Defensor Central',
-    desc: 'La jerarquía y la herencia. Especificidad de estilos que impone orden desde el centro de la zaga.',
-    color: '#4A85BC'
+    desc: 'La jerarquía y la herencia. Especificidad de estilos que impone orden desde el centro de la zaga.'
   },
   {
-    n: '04', name: 'Media Queries', tp: 'tp-4/',
+    n: '04', name: 'Media Queries', tp: 'tp-4/', fifa_id: '232488',
     player: 'Cristian Romero', pos: 'Defensor Central',
-    desc: 'Adaptación táctica total. Diseño responsivo que responde a cualquier pantalla como Cuti responde a cualquier delantero.',
-    color: '#3975AC'
+    desc: 'Adaptación táctica total. Diseño responsivo que responde a cualquier pantalla como Cuti responde a cualquier delantero.'
   },
   {
-    n: '05', name: 'Bootstrap Base', tp: 'tp-5/',
+    n: '05', name: 'Bootstrap Base', tp: 'tp-5/', fifa_id: '239301',
     player: 'Lisandro Martínez', pos: 'Defensor Central',
-    desc: 'Sistemas probados al máximo nivel. Framework que otorga estructura sólida y componentes listos para la Premier.',
-    color: '#2865A0'
+    desc: 'Sistemas probados al máximo nivel. Framework que otorga estructura sólida y componentes listos para la Premier.'
   },
   {
-    n: '06', name: 'Bootstrap Grid', tp: 'tp-6/',
+    n: '06', name: 'Bootstrap Grid', tp: 'tp-6/', fifa_id: '211256',
     player: 'Germán Pezzella', pos: 'Defensor',
-    desc: 'Grillas complejas y alineación perfecta. La columna vertebral del layout que nunca pierde la forma.',
-    color: '#75AADB'
+    desc: 'Grillas complejas y alineación perfecta. La columna vertebral del layout que nunca pierde la forma.'
   },
   {
-    n: '07', name: 'Bootstrap Avanzado', tp: 'tp-7/',
+    n: '07', name: 'Bootstrap Avanzado', tp: 'tp-7/', fifa_id: '212622',
     player: 'Rodrigo De Paul', pos: 'Mediocampista',
-    desc: 'Componentes avanzados en el medio del campo. El motor que conecta diseño y funcionalidad sin parar de correr.',
-    color: '#C4A44A'
+    desc: 'Componentes avanzados en el medio del campo. El motor que conecta diseño y funcionalidad sin parar de correr.'
   },
   {
-    n: '08', name: 'JS Funciones', tp: 'tp-8/',
+    n: '08', name: 'JS Funciones', tp: 'tp-8/', fifa_id: '258698',
     player: 'Enzo Fernández', pos: 'Mediocampista',
-    desc: 'Lógica y elegancia. Funciones reutilizables que distribuyen el juego con la visión de un mediocampista de clase mundial.',
-    color: '#D4B45A'
+    desc: 'Lógica y elegancia. Funciones reutilizables que distribuyen el juego con la visión de un mediocampista de clase mundial.'
   },
   {
-    n: '09', name: 'JS Arrays', tp: 'tp-9/',
+    n: '09', name: 'JS Arrays', tp: 'tp-9/', fifa_id: '246960',
     player: 'Julián Álvarez', pos: 'Delantero',
-    desc: 'Velocidad e iteración. Arrays y bucles que recorren colecciones de datos como La Araña recorre el área rival.',
-    color: '#E0C060'
+    desc: 'Velocidad e iteración. Arrays y bucles que recorren colecciones de datos como La Araña recorre el área rival.'
   },
   {
-    n: '10', name: 'JS Objetos', tp: 'tp-10/',
+    n: '10', name: 'JS Objetos', tp: 'tp-10/', fifa_id: '158023',
     player: 'Lionel Messi', pos: 'Delantero',
-    desc: 'El mejor de todos los tiempos. Objetos complejos que encapsulan el estado y la magia de la aplicación.',
-    color: '#FFD700'
+    desc: 'El mejor de todos los tiempos. Objetos complejos que encapsulan el estado y la magia de la aplicación.'
   },
   {
-    n: '11', name: 'JS DOM', tp: 'tp-11/',
+    n: '11', name: 'JS DOM', tp: 'tp-11/', fifa_id: '259646',
     player: 'Alejandro Garnacho', pos: 'Extremo',
-    desc: 'Velocidad y desborde por el flanco. Manipulación dinámica del DOM que altera la realidad de la interfaz en tiempo real.',
-    color: '#75AADB'
+    desc: 'Velocidad y desborde por el flanco. Manipulación dinámica del DOM que altera la realidad de la interfaz en tiempo real.'
   },
   {
-    n: '12', name: 'JS Lógica', tp: 'tp-12/',
+    n: '12', name: 'JS Lógica', tp: 'tp-12/', fifa_id: '212501',
     player: 'Geronimo Rulli', pos: 'Arquero',
-    desc: 'Algoritmos encriptados y lógica avanzada. Segunda línea de defensa cuando la complejidad ataca.',
-    color: '#5B95CC'
+    desc: 'Algoritmos encriptados y lógica avanzada. Segunda línea de defensa cuando la complejidad ataca.'
   },
   {
-    n: '13', name: 'JS Data', tp: 'tp-13/',
+    n: '13', name: 'JS Data', tp: 'tp-13/', fifa_id: '245367',
     player: 'Thiago Almada', pos: 'Mediocampista',
-    desc: 'Persistencia de datos en localStorage. Salvaguardando el estado del reino contra el olvido del navegador.',
-    color: '#4A85BC'
+    desc: 'Persistencia de datos en localStorage. Salvaguardando el estado del reino contra el olvido del navegador.'
   },
   {
-    n: '14', name: 'JS Async', tp: 'tp-14/',
+    n: '14', name: 'JS Async', tp: 'tp-14/', fifa_id: '231558',
     player: 'Exequiel Palacios', pos: 'Mediocampista',
-    desc: 'Fetch, Promises y APIs externas. Conectando con el mundo exterior de forma asíncrona y resiliente.',
-    color: '#3975AC'
+    desc: 'Fetch, Promises y APIs externas. Conectando con el mundo exterior de forma asíncrona y resiliente.'
   },
   {
-    n: '15', name: 'JS Flow', tp: 'tp-15/',
+    n: '15', name: 'JS Flow', tp: 'tp-15/', fifa_id: '207439',
     player: 'Leandro Paredes', pos: 'Mediocampista',
-    desc: 'Control del flujo de datos. Manejo de errores y control de ejecución con la pausa y la clase de un volante distribuidor.',
-    color: '#2865A0'
+    desc: 'Control del flujo de datos. Manejo de errores y control de ejecución con la pausa y la clase de un volante distribuidor.'
   },
   {
-    n: '16', name: 'PHP Backend', tp: 'tp-16/',
+    n: '16', name: 'PHP Backend', tp: 'tp-16/', fifa_id: '231478',
     player: 'Lautaro Martínez', pos: 'Delantero',
-    desc: 'El Toro en el servidor. Procesamiento del lado del servidor que demuele defensas con formularios y lógica de negocio.',
-    color: '#C4A44A'
+    desc: 'El Toro en el servidor. Procesamiento del lado del servidor que demuele defensas con formularios y lógica de negocio.'
   }
 ];
+
+// Función para armar la URL de la imagen de EA (SoFIFA format)
+const getPlayerImage = (id) => {
+  const str = id.toString();
+  return `https://cdn.sofifa.net/players/${str.slice(0,3)}/${str.slice(3)}/24_120.png`;
+};
 
 // Render cards
 const grid = document.getElementById('grid');
@@ -567,8 +575,13 @@ PLANTEL.forEach((p, i) => {
   a.href = p.tp;
   a.style.animationDelay = `${i * 0.045}s`;
   a.innerHTML = `
-    <div class="card-stripe"></div>
+    <!-- Imagen del jugador con fondo transparente -->
+    <div class="card-player-img" style="background-image: url('${getPlayerImage(p.fifa_id)}');"></div>
+    <!-- Gradiente lateral para legibilidad -->
+    <div class="card-gradient"></div>
     <div class="card-dorsal-bg">${p.n}</div>
+
+    <div class="card-stripe"></div>
     <div class="card-body">
       <div class="card-top">
         <div class="card-dorsal">#${p.n}</div>
@@ -610,7 +623,6 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
 camera.position.set(0, 0, 40);
 
-// ── Particle field ──────────────────────────────
 const COUNT = 1800;
 const geo = new THREE.BufferGeometry();
 const positions = new Float32Array(COUNT * 3);
@@ -642,82 +654,60 @@ geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3));
 geo.setAttribute('size',     new THREE.BufferAttribute(sizes, 1));
 
 const mat = new THREE.PointsMaterial({
-  size: 0.5,
-  vertexColors: true,
-  transparent: true,
-  opacity: 0.55,
-  sizeAttenuation: true,
-  depthWrite: false,
+  size: 0.5, vertexColors: true, transparent: true, opacity: 0.55,
+  sizeAttenuation: true, depthWrite: false,
 });
 
 const particles = new THREE.Points(geo, mat);
 scene.add(particles);
 
-// ── Pitch lines (subtle field markings) ─────────
 function addLine(points, opacity = 0.04) {
   const g = new THREE.BufferGeometry().setFromPoints(points);
   const m = new THREE.LineBasicMaterial({ color: '#75AADB', transparent: true, opacity });
   return new THREE.Line(g, m);
 }
 
-// Center circle
 const circlePoints = [];
 for (let i = 0; i <= 64; i++) {
   const a = (i / 64) * Math.PI * 2;
   circlePoints.push(new THREE.Vector3(Math.cos(a) * 14, Math.sin(a) * 10, -20));
 }
 scene.add(addLine(circlePoints, 0.07));
-
-// Center line
 scene.add(addLine([new THREE.Vector3(-60, 0, -20), new THREE.Vector3(60, 0, -20)], 0.05));
 
-// Outer rectangle
 const rect = [
-  new THREE.Vector3(-55, -32, -20),
-  new THREE.Vector3( 55, -32, -20),
-  new THREE.Vector3( 55,  32, -20),
-  new THREE.Vector3(-55,  32, -20),
+  new THREE.Vector3(-55, -32, -20), new THREE.Vector3( 55, -32, -20),
+  new THREE.Vector3( 55,  32, -20), new THREE.Vector3(-55,  32, -20),
   new THREE.Vector3(-55, -32, -20),
 ];
 scene.add(addLine(rect, 0.05));
 
-// ── Mouse parallax ──────────────────────────────
 let mouseX = 0, mouseY = 0;
 window.addEventListener('mousemove', e => {
   mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
   mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
 });
 
-// ── Resize ──────────────────────────────────────
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// ── Scroll depth ────────────────────────────────
-let scrollY = 0;
-window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
-
-// ── Animate ─────────────────────────────────────
 const clock = new THREE.Clock();
-
 function tick() {
   requestAnimationFrame(tick);
   const t = clock.getElapsedTime();
 
-  // Slow particle drift + spin
   particles.rotation.y = t * 0.025 + mouseX * 0.04;
   particles.rotation.x = t * 0.01  - mouseY * 0.02;
 
-  // Float individual particles on y using speeds
   const pos = geo.attributes.position.array;
   for (let i = 0; i < COUNT; i++) {
     pos[i * 3 + 1] += Math.sin(t * speeds[i] * 10 + i) * 0.003;
   }
   geo.attributes.position.needsUpdate = true;
 
-  // Parallax camera drift
   camera.position.x += (mouseX * 3 - camera.position.x) * 0.03;
   camera.position.y += (-mouseY * 2 - camera.position.y) * 0.03;
 
