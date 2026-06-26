@@ -500,18 +500,7 @@
 </div>
 
 <script>
-/*
-  CORRECCIÓN: en la versión anterior los IDs de api-sports.io y sofifa.net
-  estaban mal asignados (eran casi al azar), por eso aparecían fotos de
-  jugadores que no correspondían. api-sports requiere API key para casi
-  todo, y sofifa cambia sus IDs cada año -> ambas fuentes son inestables
-  para este caso de uso.
 
-  SOLUCIÓN: usamos la API pública de Wikipedia (no requiere key) y
-  pedimos la foto por NOMBRE de jugador, no por ID numérico. Así la
-  imagen que llega es siempre la de la página de ese jugador.
-  Si por algún motivo no hay foto disponible, se muestra el fallback
-  de iniciales que ya tenías.
 */
 const PLANTEL = [
   {
@@ -616,7 +605,7 @@ function getInitials(name) {
   return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 }
 
-// Cache simple en memoria para no repetir fetch si dos jugadores comparten wiki (no debería pasar, pero por si acaso)
+
 const wikiCache = {};
 
 async function getWikipediaPhoto(wikiTitle) {
@@ -624,7 +613,6 @@ async function getWikipediaPhoto(wikiTitle) {
 
   const encoded = encodeURIComponent(wikiTitle.replace(/ /g, '_'));
 
-  // Intento 1: Wikipedia en español
   try {
     const res = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encoded}`);
     if (res.ok) {
@@ -634,7 +622,7 @@ async function getWikipediaPhoto(wikiTitle) {
     }
   } catch (e) { /* sigue al siguiente intento */ }
 
-  // Intento 2: Wikipedia en inglés (fallback si no está en es.wikipedia)
+
   try {
     const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encoded}`);
     if (res.ok) {
@@ -726,7 +714,6 @@ PLANTEL.forEach((p, i) => {
   });
 });
 
-// Intersection Observer para animación de entrada
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
