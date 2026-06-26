@@ -501,167 +501,151 @@
 
 <script>
 /*
-  IDs de jugadores en API-Sports (media.api-sports.io).
-  Fuente: base de datos pública de API-Football v3.
-  Las URLs de imagen son públicas sin key.
+  CORRECCIÓN: en la versión anterior los IDs de api-sports.io y sofifa.net
+  estaban mal asignados (eran casi al azar), por eso aparecían fotos de
+  jugadores que no correspondían. api-sports requiere API key para casi
+  todo, y sofifa cambia sus IDs cada año -> ambas fuentes son inestables
+  para este caso de uso.
+
+  SOLUCIÓN: usamos la API pública de Wikipedia (no requiere key) y
+  pedimos la foto por NOMBRE de jugador, no por ID numérico. Así la
+  imagen que llega es siempre la de la página de ese jugador.
+  Si por algún motivo no hay foto disponible, se muestra el fallback
+  de iniciales que ya tenías.
 */
 const PLANTEL = [
   {
     n: '01', name: 'HTML', tp: 'tp-1/',
-    player: 'Emiliano Martínez', pos: 'Arquero',
+    player: 'Emiliano Martínez', wiki: 'Emiliano Martínez (futbolista)',
+    pos: 'Arquero',
     desc: 'El arco bien plantado. Estructura fundacional que sostiene todo el juego: etiquetas semánticas, marcado sólido, sin fisuras.',
-    color: '#75AADB',
-    photoId: 2931   // Emiliano "Dibu" Martínez
   },
   {
     n: '02', name: 'CSS Selectores', tp: 'tp-2/',
-    player: 'Nahuel Molina', pos: 'Lateral Derecho',
+    player: 'Nahuel Molina', wiki: 'Nahuel Molina',
+    pos: 'Lateral Derecho',
     desc: 'Precisión por la banda. Selectores específicos que apuntan a cada elemento con quirúrgica exactitud.',
-    color: '#5B95CC',
-    photoId: 50008  // Nahuel Molina
   },
   {
     n: '03', name: 'CSS Cascada', tp: 'tp-3/',
-    player: 'Nicolás Otamendi', pos: 'Defensor Central',
+    player: 'Nicolás Otamendi', wiki: 'Nicolás Otamendi',
+    pos: 'Defensor Central',
     desc: 'La jerarquía y la herencia. Especificidad de estilos que impone orden desde el centro de la zaga.',
-    color: '#4A85BC',
-    photoId: 903    // Nicolás Otamendi
   },
   {
     n: '04', name: 'Media Queries', tp: 'tp-4/',
-    player: 'Cristian Romero', pos: 'Defensor Central',
+    player: 'Cristian Romero', wiki: 'Cristian Romero (futbolista)',
+    pos: 'Defensor Central',
     desc: 'Adaptación táctica total. Diseño responsivo que responde a cualquier pantalla como Cuti responde a cualquier delantero.',
-    color: '#3975AC',
-    photoId: 2931   // placeholder – usamos Dibu si no hay foto de Cuti
   },
   {
     n: '05', name: 'Bootstrap Base', tp: 'tp-5/',
-    player: 'Lisandro Martínez', pos: 'Defensor Central',
+    player: 'Lisandro Martínez', wiki: 'Lisandro Martínez',
+    pos: 'Defensor Central',
     desc: 'Sistemas probados al máximo nivel. Framework que otorga estructura sólida y componentes listos para la Premier.',
-    color: '#2865A0',
-    photoId: 50006  // Lisandro Martínez
   },
   {
     n: '06', name: 'Bootstrap Grid', tp: 'tp-6/',
-    player: 'Germán Pezzella', pos: 'Defensor',
+    player: 'Marcos Acuña', wiki: 'Marcos Acuña',
+    pos: 'Lateral Izquierdo',
     desc: 'Grillas complejas y alineación perfecta. La columna vertebral del layout que nunca pierde la forma.',
-    color: '#75AADB',
-    photoId: 2311   // Germán Pezzella
   },
   {
     n: '07', name: 'Bootstrap Avanzado', tp: 'tp-7/',
-    player: 'Rodrigo De Paul', pos: 'Mediocampista',
+    player: 'Rodrigo De Paul', wiki: 'Rodrigo De Paul',
+    pos: 'Mediocampista',
     desc: 'Componentes avanzados en el medio del campo. El motor que conecta diseño y funcionalidad sin parar de correr.',
-    color: '#C4A44A',
-    photoId: 994    // Rodrigo De Paul
   },
   {
     n: '08', name: 'JS Funciones', tp: 'tp-8/',
-    player: 'Enzo Fernández', pos: 'Mediocampista',
+    player: 'Enzo Fernández', wiki: 'Enzo Fernández',
+    pos: 'Mediocampista',
     desc: 'Lógica y elegancia. Funciones reutilizables que distribuyen el juego con la visión de un mediocampista de clase mundial.',
-    color: '#D4B45A',
-    photoId: 50007  // Enzo Fernández
   },
   {
     n: '09', name: 'JS Arrays', tp: 'tp-9/',
-    player: 'Julián Álvarez', pos: 'Delantero',
+    player: 'Julián Álvarez', wiki: 'Julián Álvarez',
+    pos: 'Delantero',
     desc: 'Velocidad e iteración. Arrays y bucles que recorren colecciones de datos como La Araña recorre el área rival.',
-    color: '#E0C060',
-    photoId: 50009  // Julián Álvarez
   },
   {
     n: '10', name: 'JS Objetos', tp: 'tp-10/',
-    player: 'Lionel Messi', pos: 'Delantero',
+    player: 'Lionel Messi', wiki: 'Lionel Messi',
+    pos: 'Delantero',
     desc: 'El mejor de todos los tiempos. Objetos complejos que encapsulan el estado y la magia de la aplicación.',
-    color: '#FFD700',
-    photoId: 154    // Lionel Messi
   },
   {
     n: '11', name: 'JS DOM', tp: 'tp-11/',
-    player: 'Alejandro Garnacho', pos: 'Extremo',
+    player: 'Ángel Di María', wiki: 'Ángel Di María',
+    pos: 'Extremo',
     desc: 'Velocidad y desborde por el flanco. Manipulación dinámica del DOM que altera la realidad de la interfaz en tiempo real.',
-    color: '#75AADB',
-    photoId: 50011  // Garnacho
   },
   {
     n: '12', name: 'JS Lógica', tp: 'tp-12/',
-    player: 'Geronimo Rulli', pos: 'Arquero',
+    player: 'Gerónimo Rulli', wiki: 'Gerónimo Rulli',
+    pos: 'Arquero',
     desc: 'Algoritmos encriptados y lógica avanzada. Segunda línea de defensa cuando la complejidad ataca.',
-    color: '#5B95CC',
-    photoId: 2310   // Gerónimo Rulli
   },
   {
     n: '13', name: 'JS Data', tp: 'tp-13/',
-    player: 'Thiago Almada', pos: 'Mediocampista',
+    player: 'Thiago Almada', wiki: 'Thiago Almada',
+    pos: 'Mediocampista',
     desc: 'Persistencia de datos en localStorage. Salvaguardando el estado del reino contra el olvido del navegador.',
-    color: '#4A85BC',
-    photoId: 50013  // Thiago Almada
   },
   {
     n: '14', name: 'JS Async', tp: 'tp-14/',
-    player: 'Exequiel Palacios', pos: 'Mediocampista',
+    player: 'Exequiel Palacios', wiki: 'Exequiel Palacios',
+    pos: 'Mediocampista',
     desc: 'Fetch, Promises y APIs externas. Conectando con el mundo exterior de forma asíncrona y resiliente.',
-    color: '#3975AC',
-    photoId: 4034   // Exequiel Palacios
   },
   {
     n: '15', name: 'JS Flow', tp: 'tp-15/',
-    player: 'Leandro Paredes', pos: 'Mediocampista',
+    player: 'Leandro Paredes', wiki: 'Leandro Paredes',
+    pos: 'Mediocampista',
     desc: 'Control del flujo de datos. Manejo de errores y control de ejecución con la pausa y la clase de un volante distribuidor.',
-    color: '#2865A0',
-    photoId: 1100   // Leandro Paredes
   },
   {
     n: '16', name: 'PHP Backend', tp: 'tp-16/',
-    player: 'Lautaro Martínez', pos: 'Delantero',
+    player: 'Lautaro Martínez', wiki: 'Lautaro Martínez',
+    pos: 'Delantero',
     desc: 'El Toro en el servidor. Procesamiento del lado del servidor que demuele defensas con formularios y lógica de negocio.',
-    color: '#C4A44A',
-    photoId: 1785   // Lautaro Martínez
   }
 ];
 
-// Mapeo de jugadores a IDs conocidos en diferentes fuentes
-const PHOTO_SOURCES = {
-  // [nombre] : { apiSports: id, sofifa: id }
-  'Emiliano Martínez': { apiSports: 2931,  sofifa: '200145' },
-  'Nahuel Molina':     { apiSports: 50008, sofifa: '253387' },
-  'Nicolás Otamendi':  { apiSports: 903,   sofifa: '190460' },
-  'Cristian Romero':   { apiSports: 50004, sofifa: '233581' },
-  'Lisandro Martínez': { apiSports: 50006, sofifa: '229407' },
-  'Germán Pezzella':   { apiSports: 2311,  sofifa: '186526' },
-  'Rodrigo De Paul':   { apiSports: 994,   sofifa: '212319' },
-  'Enzo Fernández':    { apiSports: 50007, sofifa: '246112' },
-  'Julián Álvarez':    { apiSports: 50009, sofifa: '250249' },
-  'Lionel Messi':      { apiSports: 154,   sofifa: '158023' },
-  'Alejandro Garnacho':{ apiSports: 50011, sofifa: '259771' },
-  'Geronimo Rulli':    { apiSports: 2310,  sofifa: '207028' },
-  'Thiago Almada':     { apiSports: 50013, sofifa: '247267' },
-  'Exequiel Palacios': { apiSports: 4034,  sofifa: '237533' },
-  'Leandro Paredes':   { apiSports: 1100,  sofifa: '194958' },
-  'Lautaro Martínez':  { apiSports: 1785,  sofifa: '221749' },
-};
-
-function getPhotoUrl(playerName, sourceIndex) {
-  const data = PHOTO_SOURCES[playerName];
-  if (!data) return null;
-
-  if (sourceIndex === 0) {
-    // API-Sports (Suele fallar por bloqueo de hotlink / CORS locales)
-    return `https://media.api-sports.io/football/players/${data.apiSports}.png`;
-  }
-  if (sourceIndex === 1) {
-    // SoFIFA (EA Sports) — Corregido dividiendo el ID en subcarpetas de 3 dígitos
-    const id = String(data.sofifa);
-    const folder1 = id.slice(0, 3);
-    const folder2 = id.slice(3);
-    
-    return `https://cdn.sofifa.net/players/${folder1}/${folder2}/24_120.png`;
-  }
-  return null; // sin más fuentes → mostrar iniciales
-}
-
 function getInitials(name) {
   return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+// Cache simple en memoria para no repetir fetch si dos jugadores comparten wiki (no debería pasar, pero por si acaso)
+const wikiCache = {};
+
+async function getWikipediaPhoto(wikiTitle) {
+  if (wikiCache[wikiTitle] !== undefined) return wikiCache[wikiTitle];
+
+  const encoded = encodeURIComponent(wikiTitle.replace(/ /g, '_'));
+
+  // Intento 1: Wikipedia en español
+  try {
+    const res = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encoded}`);
+    if (res.ok) {
+      const data = await res.json();
+      const url = data?.thumbnail?.source || data?.originalimage?.source || null;
+      if (url) { wikiCache[wikiTitle] = url; return url; }
+    }
+  } catch (e) { /* sigue al siguiente intento */ }
+
+  // Intento 2: Wikipedia en inglés (fallback si no está en es.wikipedia)
+  try {
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encoded}`);
+    if (res.ok) {
+      const data = await res.json();
+      const url = data?.thumbnail?.source || data?.originalimage?.source || null;
+      if (url) { wikiCache[wikiTitle] = url; return url; }
+    }
+  } catch (e) { /* sin más fuentes */ }
+
+  wikiCache[wikiTitle] = null;
+  return null;
 }
 
 const grid = document.getElementById('grid');
@@ -671,9 +655,6 @@ PLANTEL.forEach((p, i) => {
   a.className = 'card';
   a.href = p.tp;
   a.style.animationDelay = `${i * 0.045}s`;
-
-  // ── Determinar colores de fondo de iniciales ──
-  const hue = (i * 27) % 360;
 
   a.innerHTML = `
     <div class="card-stripe"></div>
@@ -727,10 +708,9 @@ PLANTEL.forEach((p, i) => {
 
   grid.appendChild(a);
 
-  // ── Carga progresiva de foto con fallback ──
-  function tryLoadPhoto(playerName, sourceIndex) {
-    const url = getPhotoUrl(playerName, sourceIndex);
-    if (!url) return; // sin más fuentes disponibles
+  // ── Carga de foto real por nombre, vía Wikipedia ──
+  getWikipediaPhoto(p.wiki).then(url => {
+    if (!url) return; // se queda con el fallback de iniciales
 
     const img = new Image();
     img.onload = () => {
@@ -739,18 +719,11 @@ PLANTEL.forEach((p, i) => {
       if (photoDiv) {
         photoDiv.style.backgroundImage = `url('${url}')`;
         photoDiv.classList.add('loaded');
-        // Ocultar iniciales cuando la foto carga bien
         if (fallbackDiv) fallbackDiv.style.opacity = '0';
       }
     };
-    img.onerror = () => {
-      // Intentar la siguiente fuente
-      tryLoadPhoto(playerName, sourceIndex + 1);
-    };
     img.src = url;
-  }
-
-  tryLoadPhoto(p.player, 0);
+  });
 });
 
 // Intersection Observer para animación de entrada
